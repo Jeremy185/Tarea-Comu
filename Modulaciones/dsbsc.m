@@ -199,13 +199,13 @@ function [filtered_signal, DEP, f0] = aplicarFiltroPasaBanda(signal_to_demodulat
     % Fs: Frecuencia de muestreo
     % fc: Frecuencia central del filtro pasa banda
     % BW: Ancho de banda del filtro pasa banda
-    sginal_modulated = signal_to_demodulate .* c;
+    signal_demodulated = signal_to_demodulate .* c;
     BW = 2*fm;
     % Diseñar el filtro pasa banda
     h = fir1(90, [((fc - BW/2)/Fs), ((fc + BW/2)/Fs)]); %Diseña un filtro pasabanda de orden 90
 
     % Aplicar el filtro pasa banda a la señal
-    filtered_signal = filter(h, 1, sginal_modulated);
+    filtered_signal = filter(h, 1, signal_demodulated);
 
     % Calcular la densidad espectral de potencia (DEP)
     Nz = length(filtered_signal);
