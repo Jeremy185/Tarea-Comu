@@ -98,11 +98,11 @@ dsb_sc_modulated_noisy_medium = awgn(dsb_sc_modulated, snr_medium);
 dsb_sc_modulated_noisy_high = awgn(dsb_sc_modulated, snr_high);
 
 % Llamar a la función para aplicar el filtro pasa banda con Ruido bajo
-[filtered_signal_r1, DEP_r1, f0_r1] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_low, Fs, fc, fm);
+[filtered_signal_r1, DEP_r1, f0_r1] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_low, Fs, fc, fm,c);
 % Llamar a la función para aplicar el filtro pasa banda con Ruido medio
-[filtered_signal_r2, DEP_r2, f0_r2] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_medium, Fs, fc, fm);
+[filtered_signal_r2, DEP_r2, f0_r2] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_medium, Fs, fc, fm,c);
 % Llamar a la función para aplicar el filtro pasa banda con Ruido alto
-[filtered_signal_r3, DEP_r3, f0_r3] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_high, Fs, fc, fm);
+[filtered_signal_r3, DEP_r3, f0_r3] = aplicarFiltroPasaBanda(dsb_sc_modulated_noisy_high, Fs, fc, fm,c);
 
 figure(2);
 subplot(3,1,1)
@@ -168,8 +168,8 @@ grid on
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Demodulacion sin ruido aplicado %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-demodulated_signal = dsb_sc_modulated .* c;  % Demodulación usando la misma portadora
-[filtered_signal, DEPz, f0z] = aplicarFiltroPasaBanda(demodulated_signal, Fs, fc, fm);
+%demodulated_signal = dsb_sc_modulated .* c;  % Demodulación usando la misma portadora
+[filtered_signal, DEPz, f0z] = aplicarFiltroPasaBanda(dsb_sc_modulated, Fs, fc, fm,c);
 
 
 % Señal demodulada
@@ -194,17 +194,18 @@ grid on
 
 %%%%%%%%%% Funcion para aplicar el filtro de demodulacion %%%%%%%%%%%%%%%%%
 
-function [filtered_signal, DEP, f0] = aplicarFiltroPasaBanda(signal_to_demodulate, Fs, fc, fm)
+function [filtered_signal, DEP, f0] = aplicarFiltroPasaBanda(signal_to_demodulate, Fs, fc, fm,c)
     % signal_to_demodulate: Señal a demodular
     % Fs: Frecuencia de muestreo
     % fc: Frecuencia central del filtro pasa banda
     % BW: Ancho de banda del filtro pasa banda
+    sginal_modulated = signal_to_demodulate .* c;
     BW = 2*fm;
     % Diseñar el filtro pasa banda
-    h = fir1(90, [((fc - BW/2)/Fs), ((fc + BW/2)/Fs)]);
+    h = fir1(90, [((fc - BW/2)/Fs), ((fc + BW/2)/Fs)]); %Diseña un filtro pasabanda de orden 90
 
     % Aplicar el filtro pasa banda a la señal
-    filtered_signal = filter(h, 1, signal_to_demodulate);
+    filtered_signal = filter(h, 1, sginal_modulated);
 
     % Calcular la densidad espectral de potencia (DEP)
     Nz = length(filtered_signal);
