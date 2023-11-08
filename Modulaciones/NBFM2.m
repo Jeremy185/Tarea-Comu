@@ -239,6 +239,7 @@ subplot(3,2,3)
 plot(t_noisy_medium,nbfm_demodulated_noisy_medium)
 title('Señal demodulada con ruido medio')
 
+
 Nm = length(nbfm_demodulated_noisy_medium);                   
 dftm = fftshift(fft(nbfm_demodulated_noisy_medium));          
 f0m = (-Nm/2:Nm/2-1)*(Fs/Nm);      
@@ -247,12 +248,12 @@ DEPm = (1/(Fs*Nm))*abs(dftm).^2;
 
 % PSD Señal Demodulada con ruido medio
 subplot(3, 2, 4);
-plot(f0,10*log10(DEPm))
+plot(f0m,10*log10(DEPb))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-120 0]);
 xlabel('f [Hz]');
 ylabel('|S(f)|^2 [dB]');
-title('PSD Señal Demodulada con ruido medio')
+title('PSD Señal Demodulada con ruido bajo')
 grid on
 
 subplot(3,2,5)
@@ -267,7 +268,7 @@ DEPh = (1/(Fs*Nh))*abs(dfth).^2;
 
 % PSD Señal Demodulada con ruido alto
 subplot(3, 2, 6);
-plot(f0,10*log10(DEPh))
+plot(f0h,10*log10(DEPh))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-120 0]);
 xlabel('f [Hz]');
@@ -299,4 +300,4 @@ grid on
 %}
 
 
-soundsc(nbfm_demodulated_noisy_low, Fs);
+%soundsc(nbfm_demodulated_noisy_low, Fs);
