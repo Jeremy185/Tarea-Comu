@@ -2,10 +2,7 @@
 
 %Cargar la señal de audio
 clc; clear; close;
-rootdirectory = 'C:\Users\YAN\Desktop';
-archivoAudio = 'AudioTarea.m4a';
-fullFilePath = fullfile(rootdirectory,archivoAudio);
-[ms, Fs] = audioread(fullFilePath);
+[ms, Fs] = audioread('AudioTarea.m4a');
 
 m = mean(ms, 2); % Señal monoaural
 m = m(:);
