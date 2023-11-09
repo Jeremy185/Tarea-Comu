@@ -3,8 +3,9 @@
 %Cargar la señal de audio
 clc;clear;
 rootdirectory = 'Z:\Downloads';
-[m, Fs] = audioread('AudioTarea.m4a');
+[ms, Fs] = audioread('AudioTarea.m4a');
 
+m= mean(ms, 2);
 m = m(:);
 
 % Parámetros
@@ -301,3 +302,32 @@ grid on
 
 
 %soundsc(nbfm_demodulated_noisy_low, Fs);
+
+figure (7)
+subplot(4, 1, 1);
+plot(t, nbfm_demodulated );
+ylim([-100 100]);
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+title('Señal Demodulada Sin Ruido');
+
+subplot(4, 1, 2);
+plot(t_noisy_low, nbfm_demodulated_noisy_low );
+ylim([0 3000]);
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+title('Señal Demodulada Con Ruido Bajo');
+
+subplot(4, 1, 3);
+plot(t_noisy_medium, nbfm_demodulated_noisy_medium );
+ylim([0 3000]);
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+title('Señal Demodulada Con Ruido Medio');
+
+subplot(4, 1, 4);
+plot(t_noisy_high, nbfm_demodulated_noisy_high );
+ylim([0 3000]);
+xlabel('Tiempo (s)');
+ylabel('Amplitud');
+title('Señal Demodulada Con Ruido Alto');
