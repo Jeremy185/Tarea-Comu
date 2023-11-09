@@ -2,10 +2,14 @@
 
 %Cargar la señal de audio
 clc; clear; close;
+<<<<<<< HEAD
 rootdirectory = 'D:\Homework\Comu\Tarea-Comu\Modulaciones';
 archivoAudio = 'AudioTarea.m4a';
 fullFilePath = fullfile(rootdirectory,archivoAudio);
 [ms, Fs] = audioread(fullFilePath);
+=======
+[ms, Fs] = audioread('AudioTarea.m4a');
+>>>>>>> e40483dee982d47ca5d133fe0134c8ebf48c1dba
 
 m = mean(ms, 2); % Señal monoaural
 m = m(:);
