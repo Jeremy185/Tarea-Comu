@@ -40,7 +40,7 @@ xlim([-1.5*fc 1.5*fc]);
 ylim([-80 50]);
 xlabel('f [Hz]');
 ylabel('|C(f)|^2 [dB]');
-title('Señal portadora en la frecuencia ');
+title('PSD de la señal portadora');
 grid on
 
 % Representación de la moduladora en el tiempo
@@ -63,7 +63,7 @@ xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
 ylabel('|M(f)|^2 [dB]');
-title('Señal moduladora en la frecuencia ');
+title('PSD de la señal moduladora ');
 grid on
 
 K=0.8;
@@ -89,9 +89,8 @@ xlim([-1.5*fc 1.5*fc]);
 ylim([-50 20]);
 xlabel('f [Hz]');
 ylabel('|S(f)|^2 [dB]');
-title('PSD señal NBFM')
+title('PSD señal NBFM modulada')
 grid on
-
 
 %sound (y, Fs);
 %
@@ -140,34 +139,10 @@ title('Señal Demodulada');
 
 snr_low = 50;       % Relación señal/ruido (bajo)
 snr_medium = 15;     % Relación señal/ruido (medio)
-snr_high = 8;       % Relación señal/ruido (alto)
-
-% DSB-SC con ruido
-mensaje_noisy_low = awgn(m, snr_low);
-mensaje_noisy_medium = awgn(m, snr_medium);
-mensaje_noisy_high = awgn(m, snr_high);
+snr_high = 2;       % Relación señal/ruido (alto)
 
 
-figure(2);
-subplot(3,1,1)
-plot(t,mensaje_noisy_low);
-xlabel('Tiempo [s]');
-ylabel('Amplitud [V]');
-title('Mensaje con ruido bajo ')
-subplot(3,1,2);
-plot(t,mensaje_noisy_medium);
-xlabel('Tiempo [s]');
-ylabel('Amplitud [V]');
-title('Mensaje con ruido medio ')
-subplot(3,1,3);
-plot(t,mensaje_noisy_high);
-xlabel('Tiempo [s]');
-ylabel('Amplitud [V]');
-title('Mensaje con ruido alto ')
-
-
-
-% DSB-SC con ruido
+% NBFM con ruido
 nbfm_modulated_noisy_low = awgn(nbfm_modulated, snr_low);
 nbfm_modulated_noisy_medium = awgn(nbfm_modulated, snr_medium);
 nbfm_modulated_noisy_high = awgn(nbfm_modulated, snr_high);
@@ -176,22 +151,22 @@ nbfm_modulated_noisy_high = awgn(nbfm_modulated, snr_high);
 figure(4);
 subplot(3,1,1)
 plot(t,nbfm_modulated_noisy_low);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5.56,5.565]);
+ylim([-11 11]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación NBFM con ruido bajo ')
 subplot(3,1,2);
 plot(t,nbfm_modulated_noisy_medium);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5.56,5.565]);
+ylim([-11 11]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación NBFM con ruido medio ')
 subplot(3,1,3);
 plot(t,nbfm_modulated_noisy_high);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5.56,5.565]);
+ylim([-11 11]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación NBFM con ruido alto ')
@@ -280,6 +255,7 @@ grid on
 figure (6)
 subplot(2, 1, 1);
 plot(t, nbfm_demodulated );
+ylim([-1000 1000 ]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada');
@@ -288,7 +264,6 @@ Nz = length(nbfm_demodulated);
 dftz = fftshift(fft(nbfm_demodulated));
 f0z = (-Nz/2:Nz/2-1) * (Fs/Nz);
 DEPz = (1/(Fs*Nz)) * abs(dftz).^2;
-
 
 % PSD de la señal demodulada sin ruido
 subplot(2,1,2)
@@ -300,34 +275,46 @@ title('PSD señal demodulada sin ruido')
 grid on
 %}
 
-
-%soundsc(nbfm_demodulated_noisy_low, Fs);
-
-figure (7)
-subplot(4, 1, 1);
-plot(t, nbfm_demodulated );
-ylim([-100 100]);
-xlabel('Tiempo (s)');
-ylabel('Amplitud');
-title('Señal Demodulada Sin Ruido');
-
-subplot(4, 1, 2);
+figure (8)
+subplot(3, 1, 1);
 plot(t_noisy_low, nbfm_demodulated_noisy_low );
 ylim([0 3000]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Bajo');
 
-subplot(4, 1, 3);
+subplot(3, 1, 2);
 plot(t_noisy_medium, nbfm_demodulated_noisy_medium );
 ylim([0 3000]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Medio');
 
-subplot(4, 1, 4);
+subplot(3, 1, 3);
 plot(t_noisy_high, nbfm_demodulated_noisy_high );
 ylim([0 3000]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Alto');
+
+% Se añade este plot para comparar
+
+% figure (9)
+% subplot(2, 1, 1);
+% plot(t,m);
+% xlim([5.6 5.63]);
+% xlabel('Tiempo (s)');
+% ylabel('Amplitud');
+% title('Señal moduladora');
+% 
+% subplot(2, 1, 2);
+% plot(t, nbfm_modulated);
+% xlim([5.6 5.63]);
+% xlabel('Tiempo (s)');
+% ylabel('Amplitud');
+% title('Señal NBFM');
+
+%soundsc(nbfm_demodulated,Fs)
+%soundsc(nbfm_demodulated_noisy_low,Fs)
+%soundsc(nbfm_demodulated_noisy_medium,Fs)
+%soundsc(nbfm_demodulated_noisy_high,Fs)
