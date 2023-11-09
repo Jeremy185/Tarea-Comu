@@ -8,12 +8,14 @@ clear all;
 rootdirectory = 'Z:\Documents\TEC\II_semestre_2023\Comu I\Comu_1';
 [m, fs] = audioread(fullfile(rootdirectory, 'AudioTarea.m4a'));
 
+%Promediar los canales izquierdo y derecho
+m = mean(m,2);
 m = m(:);
 
 % Parámetros de modulación
 fc = 1000; % Frecuencia de la portadora en Hz
 fs_mod = 44100; % Frecuencia de muestreo para la modulación
-beta = 6; % Índice de modulación
+beta = 5; % Índice de modulación
 
 % Modulación WBPM
 
@@ -38,7 +40,7 @@ y_demod = pmdemod(y_mod, fc, fs_mod, beta);
 subplot(3, 2, 3);
 plot(t,c);
 xlabel('Tiempo (s)');
-xlim([10.52 10.54]);
+xlim([6 6.025]);
 ylabel('Amplitud');
 ylim([-7 7]);
 title('Señal portadora');
@@ -64,7 +66,6 @@ subplot(3, 2, 1);
 plot(t,m);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
-
 title('Señal moduladora');
 
 %Representacion de la moduladora en la frecuencia
@@ -86,7 +87,7 @@ grid on
 subplot(3, 2, 5);
 plot(t, y_mod);
 xlabel('Tiempo (s)');
-xlim([10.52 10.54])
+xlim([6 6.025])
 ylabel('Amplitud');
 ylim([-2 2]);
 title('Señal WBPM Modulada');
@@ -119,14 +120,12 @@ snr_high = 8;       % Relación señal/ruido (alto)
 
 
 % BWPM con ruido
-mensaje_noisy_low = awgn(m, snr_low);
-mensaje_noisy_medium = awgn(m, snr_medium);
-mensaje_noisy_high = awgn(m, snr_high);
+y_mod_noisy_low = awgn(y_mod, snr_low);
+y_mod_noisy_medium = awgn(y_mod, snr_medium);
+y_mod_noisy_high = awgn(y_mod, snr_high);
 
 %Modulación con ruido
-y_mod_noisy_low = pmmod(mensaje_noisy_low, fc, fs_mod, beta);
-y_mod_noisy_medium = pmmod(mensaje_noisy_medium, fc, fs_mod, beta);
-y_mod_noisy_high = pmmod(mensaje_noisy_high, fc, fs_mod, beta);
+
 
 %Demodulación con ruido 
 y_demod_noisy_low = pmdemod(y_mod_noisy_low, fc, fs_mod, beta);
@@ -141,7 +140,7 @@ subplot(4,1,1)
 plot(t,y_demod)
 title('Señal demodulada sin ruido')
 xlabel('Tiempo (s)');
-xlim([0 20])
+xlim([0 10])
 ylabel('Amplitud');
 ylim([-2 2]);
 
@@ -149,21 +148,21 @@ ylim([-2 2]);
 subplot(4,1,2)
 plot(t,y_demod_noisy_low);
 xlabel('Tiempo [s]');
-xlim([0 20])
+xlim([0 10])
 ylabel('Amplitud [V]');
 ylim([-2 2])
 title('Demoduladora con ruido bajo ')
 subplot(4,1,3);
 plot(t,y_demod_noisy_medium);
 xlabel('Tiempo [s]');
-xlim([0 20])
+xlim([0 10])
 ylabel('Amplitud [V]');
 ylim([-2 2])
 title('Demoduladora con ruido medio ')
 subplot(4,1,4);
 plot(t,y_demod_noisy_high);
 xlabel('Tiempo [s]');
-xlim([0 20])
+xlim([0 10])
 ylabel('Amplitud [V]');
 ylim([-2 2])
 title('Demoduladora con ruido alto ')
@@ -172,21 +171,30 @@ title('Demoduladora con ruido alto ')
 
 %Plots de modulación con ruido
 figure(5);
-subplot(5,1,1)
+
+subplot(4,1,1)
+plot(t,y_mod);
+xlabel('Tiempo [s]');
+xlim([0 0.005])
+ylabel('Amplitud [V]');
+ylim([-2 2])
+title('Modulación DBPM sin ruido')
+
+subplot(4,1,2)
 plot(t,y_mod_noisy_low);
 xlabel('Tiempo [s]');
 xlim([0 0.005])
 ylabel('Amplitud [V]');
 ylim([-2 2])
-title('Modulación DBPM con ruido bajo ')
-subplot(5,1,2);
+title('Modulación DBPM con ruido bajo')
+subplot(4,1,3);
 plot(t,y_mod_noisy_medium);
 xlabel('Tiempo [s]');
 xlim([0 0.005])
 ylabel('Amplitud [V]');
 ylim([-2 2])
-title('Modulación DBPM con ruido medio ')
-subplot(5,1,3);
+title('Modulación DBPM con ruido medio')
+subplot(4,1,4);
 plot(t,y_mod_noisy_high);
 xlabel('Tiempo [s]');
 xlim([0 0.005])
@@ -194,50 +202,16 @@ ylabel('Amplitud [V]');
 ylim([-2 2])
 title('Modulación DBPM con ruido alto')
 
-%Plot de moduladoras
-% Representación de la moduladora en el tiempo
-figure(6);
-subplot(4, 1, 1);
-plot(t,m);
-xlabel('Tiempo (s)');
-ylabel('Amplitud');
-title('Señal moduladora sin ruido');
-
-%Plot de moduladora con ruido
-subplot(4,1,2)
-plot(t,mensaje_noisy_low);
-xlabel('Tiempo [s]');
-xlim([0 20])
-ylabel('Amplitud [V]');
-ylim([-2 2])
-title('Moduladora con ruido bajo ')
-subplot(4,1,3);
-plot(t,mensaje_noisy_medium);
-xlabel('Tiempo [s]');
-xlim([0 20])
-ylabel('Amplitud [V]');
-ylim([-2 2])
-title('Moduladora con ruido medio ')
-subplot(4,1,4);
-plot(t,mensaje_noisy_high);
-xlabel('Tiempo [s]');
-xlim([0 20])
-ylabel('Amplitud [V]');
-ylim([-2 2])
-title('Moduladora con ruido alto ')
 
 
 %Espectro sin ruido
-
 Nc_no_noisy = length(y_demod);                        % Longitud de la señal c
 dftc_no_noisy = fftshift(fft(y_demod));                         % Coloca la componente cero en el centro del espectro 
 f02_no_noisy = (-Nc_no_noisy/2:Nc_no_noisy/2-1)*(fs/Nc_no_noisy);      % Base de frecuencias centradas en 0
 DEPc_no_noisy = (1/(fs*Nc_no_noisy))*abs(dftc_no_noisy).^2;                       % Densidad espectral de potencia de c
 
 
-
 %Espectro bajo ruido
-
 Nc_noisy_low = length(y_demod_noisy_low);                        % Longitud de la señal c
 dftc_noisy_low = fftshift(fft(y_demod_noisy_low));                         % Coloca la componente cero en el centro del espectro 
 f02_noisy_low = (-Nc_noisy_low/2:Nc_noisy_low/2-1)*(fs/Nc_noisy_low);      % Base de frecuencias centradas en 0
