@@ -87,7 +87,7 @@ DEPy = (1/(Fs*Ny))*abs(dfty).^2;
 subplot(3, 2, 6);
 plot(f0,10*log10(DEPy))
 xlim([-1.5*fc 1.5*fc]);
-ylim([-100 100]);
+ylim([-100 30]);
 xlabel('f [Hz]');
 ylabel('|S(f)|^2 [dB]');
 title('PSD señal WBFM')
@@ -95,12 +95,14 @@ grid on
 
 %Demodulación
 % Señal demodulada
-s_demodulada = fmdemod(s,fc, Fs,beta);
+envelop = abs(hilbert(s)); % Envolvente de la señal modulada
+lowPassFilter  = designfilt('lowpassfir', 'FilterOrder', 100, 'CutoffFrequency', 2*fm/Fs, 'SampleRate', Fs); % Filtro pasa bajos
+s_demodulada = filter(lowPassFilter, envelop); % Señal demodulada
 s_normalizado = s_demodulada / max(abs(s_demodulada)); % Señal normalizada
 
 figure (6)
 subplot(2, 1, 1);
-plot(t, s_normalizado );
+plot(t, s_normalizado);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada');
@@ -159,31 +161,35 @@ audio_noisy_high_modulated = Ac*(1+beta*audio_noisy_high).*cos(2*pi*fc*t');
 figure(4);
 subplot(3,1,1)
 plot(t,audio_noisy_low_modulated);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5 5.005]);
+ylim([-20 20]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación WBFM con ruido bajo ')
 subplot(3,1,2);
 plot(t,audio_noisy_medium_modulated);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5 5.005]);
+ylim([-20 20]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación WBFM con ruido medio ')
 subplot(3,1,3);
 plot(t,audio_noisy_high_modulated);
-xlim([10.56,10.595]);
-ylim([-1.5 1.5]);
+xlim([5 5.005]);
+ylim([-40 40]);
 xlabel('Tiempo [s]');
 ylabel('Amplitud [V]');
 title('Modulación WBFM con ruido alto ')
 
 
 % Señal demodulada con ruido
-s_demodulada_low = diff(unwrap(angle(hilbert(audio_noisy_low_modulated)))) * (Fs / (2 * pi * beta));
-s_demodulada_medium = diff(unwrap(angle(hilbert(audio_noisy_medium_modulated)))) * (Fs / (2 * pi * beta));
-s_demodulada_high = diff(unwrap(angle(hilbert(audio_noisy_high_modulated)))) * (Fs / (2 * pi * beta));
+envelop_low = abs(hilbert(audio_noisy_low_modulated)); % Envolvente de la señal modulada
+envelop_medium = abs(hilbert(audio_noisy_medium_modulated)); % Envolvente de la señal modulada
+envelop_high = abs(hilbert(audio_noisy_high_modulated)); % Envolvente de la señal modulada
+
+s_demodulada_low = filter(lowPassFilter, envelop_low);
+s_demodulada_medium = filter(lowPassFilter, envelop_medium);
+s_demodulada_high = filter(lowPassFilter, envelop_high);
 
 s_normalizado_low = s_demodulada_low / max(abs(s_demodulada_low)); % Señal normalizada
 s_normalizado_medium = s_demodulada_medium / max(abs(s_demodulada_medium)); % Señal normalizada
@@ -196,6 +202,7 @@ t_ruido_alto = (0:length(s_normalizado_high)-1) / Fs;
 figure(3);
 subplot(3,2,1)
 plot(t_ruido_bajo,s_normalizado_low)
+ylim([0 1]);
 title('Señal demodulada con ruido bajo')
 
 Nb = length(s_normalizado_low);                   
@@ -216,6 +223,7 @@ grid on
 
 subplot(3,2,3)
 plot(t_ruido_medio,s_normalizado_medium)
+ylim([0 1]);
 title('Señal demodulada con ruido medio')
 
 
@@ -237,7 +245,7 @@ grid on
 
 subplot(3,2,5)
 plot(t_ruido_alto,s_normalizado_high)
-ylim([0.5 1]);
+ylim([0 1.5]);
 title('Señal demodulada con ruido alto')
 
 Nh = length(s_normalizado_high);                   
@@ -259,28 +267,33 @@ grid on
 figure (7)
 subplot(4, 1, 1);
 plot(t, s_normalizado );
-ylim([-100 100]);
+ylim([0 1]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Sin Ruido');
 
 subplot(4, 1, 2);
 plot(t_ruido_bajo,s_normalizado_low );
-ylim([0 3000]);
+ylim([0 1]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Bajo');
 
 subplot(4, 1, 3);
 plot(t_ruido_medio,s_normalizado_medium );
-ylim([0 3000]);
+ylim([0 1]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Medio');
 
 subplot(4, 1, 4);
 plot(t_ruido_alto,s_normalizado_high );
-ylim([0 3000]);
+ylim([0 1.5]);
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal Demodulada Con Ruido Alto');
+
+%soundsc(s_normalizado,Fs)
+%soundsc(s_normalizado_low,Fs)
+%soundsc(s_normalizado_medium,Fs)
+%soundsc(s_normalizado_high,Fs)
