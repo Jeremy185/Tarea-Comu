@@ -1,9 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%% DSB-SL (Portadora Suprimida) %%%%%%%%%%%%%%%%%%%%%%
 
 %Cargar la señal de audio
-%rootdirectory = 'C:\Users\jesus\OneDrive - Estudiantes ITCR\TEC\2023\II Semestre 2023\Comunicaciones Eléctricas I\Tarea\Modulacion';
-[m, Fs] = audioread('Recording.mp3');
 
+[ms, Fs] = audioread('AudioTarea.m4a');
+
+m = mean(ms,2);
 m = m(:);
 
 % Parámetros
@@ -15,7 +16,7 @@ fm = 216; %PARA ESTE AUDIO, frecuencia de la moduladora.
 
 %Parametros de la señal portadora
 fc = 1000;                  % Frecuencia de la señal portadora 1kHz
-Ac = 1;                     % Amplitud de la señal portadora
+Ac = 8;                     % Amplitud de la señal portadora
 c = Ac*cos(2*pi*fc*t');     % Señal portadora
 subplot(3, 2, 3);
 plot(t,c);
@@ -77,6 +78,8 @@ end
 
 subplot(3, 2, 5);
 plot(t, dsb_sl_modulated);
+xlim([1 5]);
+
 xlabel('Tiempo (s)');
 ylabel('Amplitud');
 title('Señal DSB-SL Modulada');
@@ -89,7 +92,7 @@ DEPy = (1/(Fs*Ny))*abs(dfty).^2;
 % PSD de la señal DSB-SL modulada
 subplot(3, 2, 6);
 plot(f0,10*log10(DEPy))
-xlim([-1.5*fc 1.5*fc]);
+xlim([-2.5*fc 2.5*fc]);
 ylim([-50 20]);
 xlabel('f [Hz]');
 ylabel('|S(f)|^2 [dB]');
@@ -176,9 +179,9 @@ grid on
 
 %Reproducir los audios demodulados con ruido
 
-%soundsl(filtered_signal_r1, Fs);
-%sound(filtered_signal_r2, Fs);
-%soundsl(filtered_signal_r3, Fs);
+%soundsc(filtered_signal_r1, Fs);
+%soundsc(filtered_signal_r2, Fs);
+soundsc(filtered_signal_r3, Fs);
 
 %%%%%%%%%%%%%%%%%%%%%%%%% Demodulacion sin ruido aplicado %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -202,7 +205,7 @@ title('PSD señal demodulada sin ruido')
 grid on
 
 %Reproducir el audio demodulado
-%sound(filtered_signal, Fs);
+%soundsc(filtered_signal, Fs);
 
 
 %%%%%%%%%% Funcion para aplicar el filtro de demodulacion %%%%%%%%%%%%%%%%%
@@ -214,7 +217,7 @@ function [filtered_signal, DEP, f0] = aplicarFiltroPasaBanda(signal_to_demodulat
     % BW: Ancho de banda del filtro pasa banda
     % 90 es el orden del filtro, entre mas alto mas ideal
 
-    signal_demodulated = signal_to_demodulate .* c;
+    signal_demodulated = signal_to_demodulate .* c; %Demodulo
     BW = 2*fm;
 
     % Diseñar el filtro pasa banda
