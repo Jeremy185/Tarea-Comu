@@ -26,15 +26,15 @@ c = Ac*cos(2*pi*fc*t');     % Señal portadora
 
 
 %CON pmmod
-y_mod = pmmod(m, fc, fs_mod, beta);
+y_mod = pmmod(m, fc,fs_mod,beta,pi);
 
 %Manualmente
 
 %y_mod = c .* cos(2 * pi * fc * t + beta * m);
 
 
-%y_demod = pmdemod(y_mod, fc, fs_mod, beta);
-y_demod = pmdemod(y_mod, fc, fs_mod, beta);
+%y_demod = pmdemod(y_mod, fc, fs_mod, beta,pi);
+y_demod = pmdemod(y_mod, fc, fs_mod, beta,pi);
 
 
 subplot(3, 2, 3);
@@ -56,7 +56,7 @@ plot(f02,10*log10(DEPc))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-80 50]);
 xlabel('f [Hz]');
-ylabel('|C(f)|^2 [dB]');
+ylabel('|C(f)|^2 [dB/Hz]');
 title('Señal portadora en la frecuencia ');
 grid on
 
@@ -79,8 +79,8 @@ plot(f01,10*log10(DEPm))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
-ylabel('|M(f)|^2 [dB]');
-title('Señal moduladora en la frecuencia ');
+ylabel('|M(f)|^2 [dB/Hz]');
+title('PSD señal moduladora en frecuencia');
 grid on
 
 % Señal WBPM modulada en el tiempo
@@ -103,7 +103,7 @@ plot(f0,10*log10(DEPy))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-50 10]);
 xlabel('f [Hz]');
-ylabel('|S(f)|^2 [dB]');
+ylabel('|S(f)|^2 [dB/Hz]');
 title('PSD señal DBPM modulada ')
 grid on
 
@@ -128,9 +128,9 @@ y_mod_noisy_high = awgn(y_mod, snr_high);
 
 
 %Demodulación con ruido 
-y_demod_noisy_low = pmdemod(y_mod_noisy_low, fc, fs_mod, beta);
-y_demod_noisy_medium = pmdemod(y_mod_noisy_medium, fc, fs_mod, beta);
-y_demod_noisy_high = pmdemod(y_mod_noisy_high, fc, fs_mod, beta);
+y_demod_noisy_low = pmdemod(y_mod_noisy_low, fc, fs_mod, beta,pi);
+y_demod_noisy_medium = pmdemod(y_mod_noisy_medium, fc, fs_mod, beta,pi);
+y_demod_noisy_high = pmdemod(y_mod_noisy_high, fc, fs_mod, beta,pi);
 
 %Plot de señales demodulas
 
@@ -220,7 +220,7 @@ DEPc_noisy_low = (1/(fs*Nc_noisy_low))*abs(dftc_noisy_low).^2;                  
 
 
 %Espectro ruido medio
-Nc_noisy_medium = length(y_demod_noisy_medium);                        % Longitud de la señal c
+Nc_noisy_medium = length(y_demod_noisy_medium);                                 % Longitud de la señal c
 dftc_noisy_medium = fftshift(fft(y_demod_noisy_medium));                         % Coloca la componente cero en el centro del espectro 
 f02_noisy_medium = (-Nc_noisy_medium/2:Nc_noisy_medium/2-1)*(fs/Nc_noisy_medium);      % Base de frecuencias centradas en 0
 DEPc_noisy_medium = (1/(fs*Nc_noisy_medium))*abs(dftc_noisy_medium).^2;                       % Densidad espectral de potencia de c
@@ -241,7 +241,7 @@ plot(f02_no_noisy,10*log10(DEPc_no_noisy))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
-ylabel('|R1(f)|^2 [dB]');
+ylabel('|R1(f)|^2 [dB/Hz]]');
 title('PSD señal demodulada sin ruido ')
 
 %Espectros con ruidos
@@ -250,21 +250,21 @@ plot(f02_noisy_low,10*log10(DEPc_noisy_low))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
-ylabel('|R1(f)|^2 [dB]');
+ylabel('|R1(f)|^2 [dB/Hz]');
 title('PSD señal demodulada con ruido bajo')
 subplot(4,1,3)
 plot(f02_noisy_medium,10*log10(DEPc_noisy_medium))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
-ylabel('|R2(f)|^2 [dB]');
+ylabel('|R2(f)|^2 [dB/Hz]');
 title('PSD señal demodulada con ruido medio')
 subplot(4,1,4)
 plot(f02_noisy_high,10*log10(DEPc_noisy_high))
 xlim([-1.5*fc 1.5*fc]);
 ylim([-60 20]);
 xlabel('f [Hz]');
-ylabel('|R3(f)|^2 [dB]');
+ylabel('|R3(f)|^2 [dB/Hz]');
 title('PSD señal demodulada con ruido alto')
 
 
